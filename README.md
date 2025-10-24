@@ -1,0 +1,503 @@
+<!-- Chosen Palette: Warm Neutrals with Blue Accent (bg-gray-50, text-blue-600) -->
+<!-- Application Structure Plan: Dashboard/Thematic Scrollable Structure. The SPA is divided into 5 thematic, scrollable sections: 1. Overview (H1, CTAs), 2. Interactive Capabilities (Primary interactive hub, allowing switch between Warehousing and Transport views), 3. Trust & Authority (About, Certifications, 24/7 commitment visualization), 4. Strategic Info Center (FAQ/Pricing/Blog accordions), 5. Conversion Hub (Contact Form/Map). This structure was chosen to prioritize user exploration and synthesis; large shippers don't read linearly—they seek specific data points (metrics, speed, safety). The interactive switching in Section 2 allows direct comparison and deeper dive into relevant service data. -->
+<!-- Visualization & Content Choices: Service Breakdown -> Goal -> Organize/Compare -> Tabbed Interface -> Click tab to switch view -> Clears visual clutter and provides two distinct information paths -> HTML/Tailwind/JS. Warehousing Metrics -> Goal -> Inform/Quantify -> Doughnut/Bar Charts -> Hover tooltip -> Showcases WMS effectiveness/accuracy -> Chart.js/Canvas. Transport Modal Share -> Goal -> Inform/Quantify -> Pie Chart -> Hover tooltip -> Visualizes "Global Reach" claim -> Chart.js/Canvas. FAQ/Pricing -> Goal -> Organize/Inform -> Accordions -> Click to expand/show detail -> Efficiently presents large secondary content blocks -> HTML/Tailwind/JS. 24/7 Response -> Goal -> Inform/Qualify -> Progress Indicator -> Static display -> Visually confirms the "Rapid Response" USP -> HTML/Tailwind/CSS. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Logistics - Full-Service Supply Chain Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .nav-link.active {
+            border-bottom: 2px solid #3b82f6; /* blue-500 */
+            color: #1d4ed8; /* blue-700 */
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header Navigation -->
+    <header id="top" class="sticky top-0 bg-white shadow-md z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">ABC Logistics</h1>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#home" class="nav-link text-gray-600 hover:text-blue-600 transition duration-150">Home</a>
+                <a href="#capabilities" class="nav-link text-gray-600 hover:text-blue-600 transition duration-150">Capabilities</a>
+                <a href="#trust" class="nav-link text-gray-600 hover:text-blue-600 transition duration-150">About & Trust</a>
+                <a href="#info" class="nav-link text-gray-600 hover:text-blue-600 transition duration-150">Info Center</a>
+                <a href="#contact" class="nav-link px-4 py-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition duration-150">Get Quote</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-blue-600">
+                ☰
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+            <a href="#home" class="nav-link block px-4 py-2 text-gray-800 hover:bg-gray-100">Home</a>
+            <a href="#capabilities" class="nav-link block px-4 py-2 text-gray-800 hover:bg-gray-100">Capabilities</a>
+            <a href="#trust" class="nav-link block px-4 py-2 text-gray-800 hover:bg-gray-100">About & Trust</a>
+            <a href="#info" class="nav-link block px-4 py-2 text-gray-800 hover:bg-gray-100">Info Center</a>
+            <a href="#contact" class="nav-link block px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100">Get Custom Quote</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        <!-- Section 1: Hero & Core Value (Home) -->
+        <section id="home" class="py-12 md:py-24 text-center bg-white rounded-xl shadow-lg mb-12">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">Logistics Solved: Rapid Response & Flexible, Full-Service Supply Chain Management for Large Shippers.</h2>
+            <p class="text-xl text-gray-500 max-w-3xl mx-auto mb-8">Stop wrestling with fragmented logistics. ABC provides **24/7 full-service warehousing and transport** tailored precisely to your volume and compliance needs.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#contact" class="px-8 py-3 rounded-full bg-blue-600 text-white font-semibold shadow-lg hover:bg-blue-700 transition duration-300">Request a Custom Quote Today</a>
+                <a href="#capabilities" class="px-8 py-3 rounded-full border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition duration-300">Explore Our Capabilities</a>
+            </div>
+            
+            <div class="mt-16 grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-blue-50 rounded-xl">
+                    <span class="text-4xl text-blue-600 mb-3 block">⏱️</span>
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">24/7 Rapid Response</h3>
+                    <p class="text-gray-600 text-sm">Our dedicated emergency service ensures your high-priority freight and critical logistics issues are handled immediately, day or night.</p>
+                </div>
+                <div class="p-6 bg-blue-50 rounded-xl">
+                    <span class="text-4xl text-blue-600 mb-3 block">🤝</span>
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">Customized Flexibility</h3>
+                    <p class="text-gray-600 text-sm">ABC analyzes your large volume demands to design flexible warehousing, transport, and fulfillment programs that truly meet your customer's needs.</p>
+                </div>
+                <div class="p-6 bg-blue-50 rounded-xl">
+                    <span class="text-4xl text-blue-600 mb-3 block">📦</span>
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">Full-Service Partnership</h3>
+                    <p class="text-gray-600 text-sm">From advanced WMS-driven warehousing to reliable FTL and LTL transportation, we simplify your entire supply chain under one trusted roof.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Capabilities Dashboard (Solutions) -->
+        <section id="capabilities" class="py-12 bg-white rounded-xl shadow-lg p-6 md:p-10 mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Interactive Capabilities Dashboard</h2>
+            <p class="text-gray-600 mb-8 max-w-3xl">Explore the core metrics and services that guarantee efficiency and control for your large-scale logistics needs. Use the tabs below to switch between our Warehousing and Transport performance data.</p>
+            
+            <!-- Tabs/Interaction -->
+            <div class="flex space-x-4 border-b border-gray-200 mb-8">
+                <button id="tab-warehouse" class="tab-button px-6 py-3 font-semibold text-white bg-blue-600 rounded-t-lg transition duration-150" data-service="warehouse">Advanced Warehousing</button>
+                <button id="tab-transport" class="tab-button px-6 py-3 font-semibold text-gray-600 hover:text-blue-600 transition duration-150" data-service="transport">Reliable Transport</button>
+            </div>
+
+            <!-- Content Container -->
+            <div id="service-content">
+                <!-- Warehouse Content (Initial View) -->
+                <div id="content-warehouse" class="grid md:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-blue-600 mb-4">Precision Inventory Management (WMS)</h3>
+                        <p class="text-gray-700 mb-6">Our secured facilities are optimized for high throughput and long-term storage. This data showcases our commitment to accuracy and turnaround speed, critical for high-volume operations.</p>
+                        
+                        <!-- Metric Cards -->
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div class="p-4 bg-gray-50 border rounded-lg">
+                                <p class="text-3xl font-extrabold text-blue-800" id="stat-accuracy">99.9%</p>
+                                <p class="text-sm text-gray-500">Inventory Accuracy</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 border rounded-lg">
+                                <p class="text-3xl font-extrabold text-blue-800" id="stat-turnaround">24h Avg.</p>
+                                <p class="text-sm text-gray-500">Order Turnaround Time</p>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-gray-600 border-l-4 border-blue-400 pl-3 italic">**Service Focus:** Utilizing the latest Warehouse Management Systems (WMS) for maximum efficiency. Services include cross-docking, temperature control, and custom labeling.</p>
+                    </div>
+                    
+                    <!-- Chart Container 1 -->
+                    <div class="flex flex-col items-center">
+                        <h4 class="text-lg font-medium mb-3">Inventory Accuracy by Type</h4>
+                        <div class="chart-container">
+                            <canvas id="warehouseChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Doughnut chart showing high accuracy levels across different storage types.</p>
+                    </div>
+                </div>
+
+                <!-- Transport Content (Hidden initially) -->
+                <div id="content-transport" class="hidden grid md:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-blue-600 mb-4">Nationwide & Global Reach</h3>
+                        <p class="text-gray-700 mb-6">We ensure reliable, safe, and on-time delivery across all modalities—road, sea, and air. Our modern fleet and established global partnerships manage the complexity of multi-modal transport.</p>
+
+                        <!-- Metric Cards -->
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div class="p-4 bg-gray-50 border rounded-lg">
+                                <p class="text-3xl font-extrabold text-blue-800" id="stat-otd">98.5%</p>
+                                <p class="text-sm text-gray-500">On-Time Delivery Rate (OTD)</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 border rounded-lg">
+                                <p class="text-3xl font-extrabold text-blue-800" id="stat-fleet">120+</p>
+                                <p class="text-sm text-gray-500">Dedicated Fleet Size</p>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-gray-600 border-l-4 border-blue-400 pl-3 italic">**Service Focus:** Comprehensive FTL/LTL freight management, dedicated fleet services, and seamless air/ocean freight coordination, all backed by 24/7 emergency support.</p>
+                    </div>
+                    
+                    <!-- Chart Container 2 -->
+                    <div class="flex flex-col items-center">
+                        <h4 class="text-lg font-medium mb-3">Transport Modal Share (Volume %)</h4>
+                        <div class="chart-container">
+                            <canvas id="transportChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Bar chart illustrating the distribution of volume across different transport methods.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Trust & Authority (About Us / Certifications / Ratings) -->
+        <section id="trust" class="py-12 bg-gray-100 rounded-xl shadow-lg p-6 md:p-10 mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">The Foundation of Trust: Safety, Commitment, and Expertise</h2>
+            <p class="text-gray-600 mb-10 max-w-3xl">We build partnerships with large volume shippers by prioritizing compliance and rapid responsiveness. This section details our core commitment and credentials.</p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <!-- Commitment Column -->
+                <div class="md:col-span-1">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Our Commitment: Full Service</h3>
+                    <p class="text-gray-700 mb-6">Our mission is to solve the complex logistics process, making it meet your exact customer needs. We focus on strategic consultation, process optimization, and reliable execution so you can focus on your core business growth.</p>
+                    <a href="#info" class="text-sm text-blue-600 font-medium hover:underline">View Our Pricing Philosophy & FAQs →</a>
+                </div>
+
+                <!-- 24/7 Response Visual -->
+                <div class="md:col-span-1">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Guaranteed 24/7 Rapid Response</h3>
+                    <p class="text-sm text-gray-600 mb-4">We guarantee a response to any critical emergency within **15 minutes**.</p>
+                    
+                    <div class="w-full bg-gray-200 rounded-full h-8 mb-2 overflow-hidden">
+                        <div id="response-bar" class="bg-red-600 h-8 text-xs font-medium text-white text-center p-2 leading-none rounded-full transition-all duration-1000 ease-out" style="width: 100%;">
+                            24/7 Emergency Coverage
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span>Contact Initiated</span>
+                        <span>15 Minute Resolution Goal</span>
+                    </div>
+                </div>
+
+                <!-- Certifications & Ratings -->
+                <div class="md:col-span-1">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Certifications & Ratings</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">✅</span>
+                            <p class="text-gray-700 font-medium">ISO 9001:2015 Certified</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">✅</span>
+                            <p class="text-gray-700 font-medium">OSHA Safety Compliant</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">⭐</span>
+                            <p class="text-gray-700 font-medium">Industry Best-in-Class Rating (External Audit)</p>
+                        </div>
+                        <p class="text-sm text-gray-500 pt-2">All credentials are independently verified and available upon consultation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Strategic Information Center (Pricing, FAQ, Blog) -->
+        <section id="info" class="py-12 p-6 md:p-10 mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center">Strategic Information Center</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-4xl mx-auto">Access critical information on our operations, costs, and strategic insights. Use the toggles below to find answers for high-volume logistics planning.</p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <!-- Column 1: Pricing Philosophy -->
+                <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Pricing & Value</h3>
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="accordion-header w-full text-left py-3 font-medium flex justify-between items-center hover:text-blue-600" data-target="price-1">How is my quote calculated for large volume?</button>
+                        <div id="price-1" class="accordion-content hidden text-sm text-gray-700 pb-3">
+                            We use a custom, non-"one-size-fits-all" model based on three factors: **Volume/Footprint**, **Product Velocity** (in/out speed), and **Custom Handling** (temp control, special compliance). This ensures you only pay for the service you need at your specific scale.
+                        </div>
+                    </div>
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="accordion-header w-full text-left py-3 font-medium flex justify-between items-center hover:text-blue-600" data-target="price-2">What influences long-term storage cost?</button>
+                        <div id="price-2" class="accordion-content hidden text-sm text-gray-700 pb-3">
+                            Long-term storage rates are based on the dedicated square footage and our inventory holding commitment. We offer favorable rates for partners committing to annual agreements and consistent volume.
+                        </div>
+                    </div>
+                    <p class="text-center mt-6">
+                        <a href="#contact" class="text-sm text-blue-600 hover:underline font-medium">Start Custom Quote Process →</a>
+                    </p>
+                </div>
+
+                <!-- Column 2: FAQ -->
+                <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Frequently Asked Questions</h3>
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="accordion-header w-full text-left py-3 font-medium flex justify-between items-center hover:text-blue-600" data-target="faq-1">How quickly can you implement a new logistics solution?</button>
+                        <div id="faq-1" class="accordion-content hidden text-sm text-gray-700 pb-3">
+                            For critical projects, our rapid deployment protocol allows us to initiate consultation, scope definition, and start mobilization within **72 hours** of agreement.
+                        </div>
+                    </div>
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="accordion-header w-full text-left py-3 font-medium flex justify-between items-center hover:text-blue-600" data-target="faq-2">What security protects my high-value inventory?</button>
+                        <div id="faq-2" class="accordion-content hidden text-sm text-gray-700 pb-3">
+                            Warehouses feature 24/7 CCTV, restricted access points, and professional on-site security teams. All freight is covered by comprehensive goods-in-transit insurance.
+                        </div>
+                    </div>
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="accordion-header w-full text-left py-3 font-medium flex justify-between items-center hover:text-blue-600" data-target="faq-3">Do you handle cross-border customs clearance?</button>
+                        <div id="faq-3" class="accordion-content hidden text-sm text-gray-700 pb-3">
+                            Yes, our full-service partnership includes managing complex customs documentation, duties, and clearance processes for seamless international transit.
+                        </div>
+                    </div>
+                    <p class="text-center mt-6">
+                        <a href="#contact" class="text-sm text-blue-600 hover:underline font-medium">Have a Specific Question? Contact Us →</a>
+                    </p>
+                </div>
+
+                <!-- Column 3: Logistics Insights (Blog Placeholder) -->
+                <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Logistics Insights</h3>
+                    <p class="text-gray-700 mb-6">Stay ahead of supply chain trends. Our blog provides strategic content tailored for high-volume shippers.</p>
+                    
+                    <div class="space-y-4">
+                        <article class="p-3 border rounded-lg hover:bg-gray-50 transition duration-150">
+                            <h4 class="font-medium text-gray-900">WMS 4.0: Maximizing High-Volume Throughput in 2025</h4>
+                            <p class="text-xs text-gray-500 mt-1">Read the analysis on how integrated WMS technology drives +15% efficiency.</p>
+                        </article>
+                        <article class="p-3 border rounded-lg hover:bg-gray-50 transition duration-150">
+                            <h4 class="font-medium text-gray-900">The Case for Dedicated Fleets: Cost vs. Control</h4>
+                            <p class="text-xs text-gray-500 mt-1">A deep dive into why large shippers choose dedicated transport partnerships.</p>
+                        </article>
+                    </div>
+                    <p class="text-center mt-6">
+                        <a href="#" class="text-sm text-blue-600 hover:underline font-medium">Read More Insights →</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Conversion Hub (Contact / Map) -->
+        <section id="contact" class="py-12 bg-blue-700 text-white rounded-xl shadow-2xl p-6 md:p-10">
+            <div class="grid md:grid-cols-2 gap-10">
+                <!-- Contact Form -->
+                <div>
+                    <h2 class="text-3xl font-bold mb-4">Ready to Optimize Your Logistics Process?</h2>
+                    <p class="mb-8 text-blue-100">Connect with a dedicated logistics specialist who understands the complexities of large volume shipping. Fill out the form below or book a specific time.</p>
+                    
+                    <form id="quoteForm" class="space-y-4 bg-white p-6 rounded-lg shadow-xl">
+                        <input type="text" placeholder="Name" class="w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500" required>
+                        <input type="text" placeholder="Company Name" class="w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500" required>
+                        <input type="email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500" required>
+                        <input type="tel" placeholder="Phone" class="w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500" required>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg text-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">*Required Service</option>
+                            <option value="Warehousing">Warehousing Only</option>
+                            <option value="Transport">Transport Only</option>
+                            <option value="Both">Full-Service (Warehousing & Transport)</option>
+                        </select>
+                        <textarea placeholder="Tell us about your volume/needs..." rows="3" class="w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        <button type="submit" class="w-full py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition duration-300">Get My Custom Quote</button>
+                    </form>
+
+                    <button id="bookAppointment" class="mt-4 w-full py-3 border border-white text-white font-bold rounded-lg hover:bg-white hover:text-blue-700 transition duration-300">Schedule Your Free Logistics Consultation</button>
+
+                    <div id="formMessage" class="mt-4 p-3 bg-green-500 text-white rounded-lg hidden"></div>
+                </div>
+
+                <!-- Map Placeholder -->
+                <div class="flex flex-col">
+                    <h3 class="text-2xl font-semibold mb-4">Our Operational Hub</h3>
+                    <div id="map-placeholder" class="h-64 md:h-full w-full bg-blue-800 rounded-lg shadow-inner flex items-center justify-center">
+                        <p class="text-xl text-blue-300">Map Placeholder (Simulated)</p>
+                        <p class="absolute bottom-4 text-xs text-blue-200">Primary Service Areas Highlighted Across Continent</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 py-8 text-center text-sm text-gray-500 border-t border-gray-200">
+        <p>&copy; 2025 ABC Logistics. All rights reserved. Full-Service Logistics Partner.</p>
+        <p class="mt-2">24/7 Emergency Line: (555) ABC-SHIP</p>
+    </footer>
+
+    <script>
+        const initialData = {
+            warehouse: {
+                labels: ['Dry Goods', 'Temp-Control', 'Hazmat', 'Long-Term'],
+                accuracy: [99.92, 99.85, 99.95, 99.90],
+                stats: { accuracy: '99.9%', turnaround: '24h Avg.' }
+            },
+            transport: {
+                labels: ['FTL', 'LTL', 'Air Freight', 'Ocean Freight'],
+                volume: [45, 30, 15, 10],
+                stats: { otd: '98.5%', fleet: '120+' }
+            }
+        };
+
+        let warehouseChart;
+        let transportChart;
+        let currentService = 'warehouse';
+
+        function initCharts() {
+            const chartOptions = (title, unit) => ({
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: title, font: { size: 16 } },
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + unit;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            });
+
+            const ctxWarehouse = document.getElementById('warehouseChart').getContext('2d');
+            warehouseChart = new Chart(ctxWarehouse, {
+                type: 'doughnut',
+                data: {
+                    labels: initialData.warehouse.labels.map(l => l.length > 16 ? l.match(/.{1,16}/g).join('\n') : l),
+                    datasets: [{
+                        label: 'Inventory Accuracy (%)',
+                        data: initialData.warehouse.accuracy,
+                        backgroundColor: ['#1d4ed8', '#3b82f6', '#60a5fa', '#93c5fd'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: chartOptions('Inventory Accuracy by Type', '%')
+            });
+
+            const ctxTransport = document.getElementById('transportChart').getContext('2d');
+            transportChart = new Chart(ctxTransport, {
+                type: 'bar',
+                data: {
+                    labels: initialData.transport.labels.map(l => l.length > 16 ? l.match(/.{1,16}/g).join('\n') : l),
+                    datasets: [{
+                        label: 'Volume Share (%)',
+                        data: initialData.transport.volume,
+                        backgroundColor: '#1d4ed8',
+                    }]
+                },
+                options: {
+                    ...chartOptions('Transport Modal Share (Volume %)', '%'),
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Volume Share (%)' } }
+                    }
+                }
+            });
+        }
+
+        function switchServiceContent(service) {
+            currentService = service;
+            document.getElementById('content-warehouse').classList.toggle('hidden', service !== 'warehouse');
+            document.getElementById('content-transport').classList.toggle('hidden', service !== 'transport');
+
+            document.getElementById('tab-warehouse').classList.remove('bg-blue-600', 'text-white');
+            document.getElementById('tab-warehouse').classList.add('text-gray-600', 'hover:text-blue-600');
+            
+            document.getElementById('tab-transport').classList.remove('bg-blue-600', 'text-white');
+            document.getElementById('tab-transport').classList.add('text-gray-600', 'hover:text-blue-600');
+
+            document.getElementById(`tab-${service}`).classList.add('bg-blue-600', 'text-white');
+            document.getElementById(`tab-${service}`).classList.remove('text-gray-600', 'hover:text-blue-600');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            switchServiceContent('warehouse'); 
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const service = e.target.getAttribute('data-service');
+                    switchServiceContent(service);
+                });
+            });
+
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-button').addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+
+            // Accordion Logic
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', (e) => {
+                    const targetId = e.target.getAttribute('data-target');
+                    const targetContent = document.getElementById(targetId);
+                    
+                    // Close all other open accordions in the same column
+                    document.querySelectorAll('.accordion-content').forEach(content => {
+                        if (content.id !== targetId) {
+                            content.classList.add('hidden');
+                        }
+                    });
+
+                    // Toggle the clicked one
+                    targetContent.classList.toggle('hidden');
+                });
+            });
+
+            // Form submission simulation
+            document.getElementById('quoteForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formMessage = document.getElementById('formMessage');
+                formMessage.textContent = 'Thank you! Your custom quote request has been received. A specialist will contact you within 15 minutes.';
+                formMessage.classList.remove('hidden', 'bg-red-500');
+                formMessage.classList.add('bg-green-500');
+                e.target.reset();
+            });
+
+            document.getElementById('bookAppointment').addEventListener('click', () => {
+                const formMessage = document.getElementById('formMessage');
+                formMessage.textContent = 'Appointment booking link simulated: We will redirect you to our scheduling platform.';
+                formMessage.classList.remove('hidden', 'bg-green-500');
+                formMessage.classList.add('bg-red-500'); 
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu after clicking a link
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
